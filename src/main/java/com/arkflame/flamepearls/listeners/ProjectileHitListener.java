@@ -72,6 +72,8 @@ public class ProjectileHitListener implements Listener {
                     double damage = generalConfigHolder.getPearlDamageSelf();
                     if(damage >= 0) {
                         player.damage(damage, projectile);
+                        // Reset no damage tick due to player invulnerability in the server side.
+                        player.setNoDamageTicks(0);
                     }
                     // Spawn endermite if chance is higher
                     if (endermiteChance > Math.random()) {
