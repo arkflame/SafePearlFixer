@@ -1,5 +1,6 @@
 package com.arkflame.flamepearls.utils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -71,9 +72,21 @@ public class LocationUtil {
             // Floor the Y value of the best location
             bestLocation.setY(Math.floor(bestLocation.getY()));
 
-            return bestLocation;
+            return findBestY(bestLocation);
         }
         // If no safe location is found, return the original location
+        return findBestY(location);
+    }
+
+    // The location is foot location.
+    static Location findBestY(Location location) {
+        if (location.clone().add(0, 1, 0).getBlock().getType().isSolid()) {
+            Location downLocation = location.clone().subtract(0, 1, 0);
+
+            if (!downLocation.getBlock().getType().isSolid())
+                return downLocation;
+        }
+
         return location;
     }
 }
