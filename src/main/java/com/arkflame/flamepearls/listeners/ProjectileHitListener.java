@@ -56,6 +56,10 @@ public class ProjectileHitListener implements Listener {
                     Location location = projectile.getLocation();
                     // Get the world of the location
                     World world = location.getWorld();
+                    // Check if the player and the pearl are in the same world
+                    if (!world.equals(player.getWorld())) {
+                        return;
+                    }
                     // Get disabled worlds
                     Collection<String> disabledWorlds = generalConfigHolder.getDisabledWorlds();
                     // Teleport the player to that location if not disabled
