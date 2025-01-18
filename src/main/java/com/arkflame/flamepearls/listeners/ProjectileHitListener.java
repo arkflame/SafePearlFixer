@@ -56,6 +56,10 @@ public class ProjectileHitListener implements Listener {
                     Location location = projectile.getLocation();
                     // Get the world of the location
                     World world = location.getWorld();
+                    // Check if the player and the pearl are in the same world
+                    if (!world.equals(player.getWorld())) {
+                        return;
+                    }
                     // Get disabled worlds
                     Collection<String> disabledWorlds = generalConfigHolder.getDisabledWorlds();
                     // Teleport the player to that location if not disabled
@@ -72,6 +76,8 @@ public class ProjectileHitListener implements Listener {
                     double damage = generalConfigHolder.getPearlDamageSelf();
                     if(damage >= 0) {
                         player.damage(damage, projectile);
+                        // Reset no damage tick due to player invulnerability in the server side.
+                        player.setNoDamageTicks(0);
                     }
                     // Spawn endermite if chance is higher
                     if (endermiteChance > Math.random()) {
