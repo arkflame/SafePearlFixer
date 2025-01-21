@@ -1,6 +1,5 @@
 package com.arkflame.flamepearls.utils;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -14,14 +13,14 @@ public class LocationUtil {
         }
 
         String typeName = type.name();
-        return 
+        return
                 type == Material.AIR ||
-                typeName.equals("REDSTONE") ||
-                typeName.equals("TRIPWIRE_HOOK") ||
-                typeName.endsWith("PRESSURE_PLATE") ||
-                typeName.equals("TALL_GRASS") ||
-                typeName.equals("LONG_GRASS") ||
-                typeName.endsWith("CARPET");
+                        typeName.equals("REDSTONE") ||
+                        typeName.equals("TRIPWIRE_HOOK") ||
+                        typeName.endsWith("PRESSURE_PLATE") ||
+                        typeName.equals("TALL_GRASS") ||
+                        typeName.equals("LONG_GRASS") ||
+                        typeName.endsWith("CARPET");
     }
 
     // A helper method that finds the nearest safest location from a given location,
@@ -72,21 +71,30 @@ public class LocationUtil {
             // Floor the Y value of the best location
             bestLocation.setY(Math.floor(bestLocation.getY()));
 
-            return findBestY(bestLocation);
+            return findNearestSafeY(bestLocation, origin);
         }
         // If no safe location is found, return the original location
-        return findBestY(location);
+        return findNearestSafeY(location, origin);
     }
 
-    // The location is foot location.
-    static Location findBestY(Location location) {
-        if (location.clone().add(0, 1, 0).getBlock().getType().isSolid()) {
-            Location downLocation = location.clone().subtract(0, 1, 0);
+    // Finds the nearest safe location along the Y-axis (height)
+    public static Location findNearestSafeY(Location location, Location origin) {
+        World world = location.getWorld();
+        int startY = location.getBlockY();
 
-            if (!downLocation.getBlock().getType().isSolid())
-                return downLocation;
+        // Check if the current block and the block above are safe
+        Block aboveBlock = world.getBlockAt(location.getBlockX(), startY + 1, location.getBlockZ());
+
+        // Check 1 block below to see if it's safe
+        Block belowBlock = world.getBlockAt(location.getBlockX(), startY - 1, location.getBlockZ());
+
+        // If the block below is safe and the block above it is air (to ensure space above)
+        if (isSafe(belowBlock.getType()) && aboveBlock.getType() == Material.AIR) {
+            // Only move down by 1 block if it's safe
+            return new Location(world, location.getX(), startY - 1 + 0.5, location.getZ(), location.getYaw(), location.getPitch());
         }
 
-        return location;
+        // If no safe location is found, return the original location (origin)
+        return origin;
     }
 }
